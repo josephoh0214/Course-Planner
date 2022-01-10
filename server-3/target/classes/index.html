@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <title>Course Tracker</title>
+</head>
+<body>
+<div class="container">
+    <div class="row d-flex flex-column">
+        <div class="col">
+            <p class="fs-3 mt-5">
+                This program will inform you of what courses are remaining to take
+                in order to acquire a bachelor's degree in your interest of major.
+            </p>
+        </div>
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Course tracker</h4>
+                    <form action="" method="get" id="course-form">
+                        <div class="mb-3">
+                            <label class="form-label">What is your current or intended major?</label>
+                            <select class="form-select" name="major" id="major">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div id="container-1" class="mb-3">
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Are you currently in this major?</label>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" name="current_major" value="yes"
+                                       id="current_major_yes" checked>
+                                <label class="form-check-label" for="current_major_yes">
+                                    Yes
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" class="form-check-input" name="current_major" value="no"
+                                       id="current_major_no">
+                                <label class="form-check-label" for="current_major_no">
+                                    No
+                                </label>
+                            </div>
+                        </div>
+                        <div id="container-2" class="mb-3">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Degree Options:</label>
+                            <select class="form-select" name="degree" id="degree">
+                                <option value="1">Biomedical & Health Informatics</option>
+                                <option value="2">Data Science</option>
+                                <option value="3">Human-Computer Interaction</option>
+                                <option value="4">Information Architecture</option>
+                                <option value="5">Information Assurance and Cybersecurity</option>
+                                <option value="6">Student-Designed Concentration</option>
+                            </select>
+                        </div>
+                        <div id="container-3" class="mb-3">
+                        </div>
+                        <div class="mb-3 d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+
+<script>
+    const renderResponse = (container, title, data) => {
+        container.innerHTML = `<label>${title}</label>`;
+        const ul = document.createElement("ul");
+        const items = data.split(",")
+        items.forEach(item => {
+            if (item) {
+                const li = document.createElement('li');
+                li.innerHTML = item;
+                ul.appendChild(li)
+            }
+        })
+        container.appendChild(ul)
+    }
+    const form = document.querySelector("#course-form")
+    form.addEventListener("submit", event => {
+        event.preventDefault()
+        const params = new URLSearchParams(new FormData(form)).toString()
+        fetch(`http://localhost:8000/courses-tracker?${params}`)
+            .then(response => response.json())
+            .then(response => {
+                renderResponse(document.querySelector("#container-1"), "Pre-requisite courses", response['response1'])
+                renderResponse(document.querySelector("#container-2"), "Core courses of graduation requirements:", response['response2'])
+                renderResponse(document.querySelector("#container-3"), "Degree options:", response['response3'])
+            })
+
+    })
+
+
+</script>
+</body>
+</html>
